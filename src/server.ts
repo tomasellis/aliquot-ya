@@ -1,37 +1,23 @@
-var express = require("express");
-var { graphqlHTTP } = require("express-graphql");
-var { buildSchema } = require("graphql");
+import { ApolloServer } from "apollo-server-express";
+import typeDefs from "./schema/typeDefs";
+import resolvers from "./schema/resolvers";
+import express from "express";
+import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 
-// Construct a schema, using GraphQL schema language
-var schema = buildSchema(`
-  type Query {
-    quoteOfTheDay: String
-    random: Float!
-    rollThreeDice: [Int]
-  }
-`);
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
+});
 
-// The root provides a resolver function for each API endpoint
-var root = {
-  quoteOfTheDay: () => {
-    return Math.random() < 0.5 ? "Take it easy" : "Salvation lies within";
-  },
-  random: () => {
-    return Math.random();
-  },
-  rollThreeDice: () => {
-    return [1, 2, 3].map((_) => 1 + Math.floor(Math.random() * 6));
-  },
+const app = express();
+
+const init = async () => {
+  await server.start();
+  server.applyMiddleware({ app });
+  app.listen({ port: 4000 }, () => {
+    console.log(`Les go at http://localhost:4000${server.graphqlPath}`);
+  });
 };
 
-var app = express();
-app.use(
-  "/graphql",
-  graphqlHTTP({
-    schema: schema,
-    rootValue: root,
-    graphiql: true,
-  })
-);
-app.listen(4000);
-console.log("Running a GraphQL API server at localhost:4000/graphql");
+init();
