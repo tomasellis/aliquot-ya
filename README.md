@@ -1,2 +1,3 @@
 # aliquot-ya
-An API to query the aliquot for a given CUIT, month and year.
+
+An API to query the aliquot for a given CUIT, month and year. WIP.
