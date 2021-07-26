@@ -16,7 +16,7 @@ const init = async () => {
   await server.start();
   server.applyMiddleware({ app });
   app.listen({ port: 4000 }, () => {
-    console.log(`Les go at http://localhost:4000${server.graphqlPath}`);
+    console.log(`Server running at http://localhost:4000${server.graphqlPath}`);
   });
 };
 
